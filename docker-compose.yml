@@ -1,36 +1,43 @@
 version: "3.9"
+
 services:
   database:
     build:
-      context: ./docker/database
-      dockerfile: Dockerfile.dev
+      context: ./
+      dockerfile: ./docker/database/Dockerfile.dev
       args:
-        - version=${BACKEND_MARIADB_VERSION}
+        - version=${DB_VERSION}
     restart: on-failure
     environment:
-      MYSQL_ROOT_PASSWORD: ${BACKEND_MARIADB_PASS}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:3306"
     volumes:
       - database_data:/var/lib/mysql
+
   backend:
     build:
-      context: ./docker/backend
-      dockerfile: Dockerfile.dev
+      context: ./
+      dockerfile: ./docker/backend/Dockerfile.dev
       args:
         - version=${BACKEND_PHP_VERSION}
     environment:
-      - XDEBUG_CONFIG= remote_port=${XDEBUG_PORT} remote_log_level=10 remote_host=host.docker.internal idekey=VSCODE remote_connect_back=0
+      - XDEBUG_CONFIG= remote_port=${XDEBUG_PORT} remote_log_level=10
+        remote_host=host.docker.internal idekey=VSCODE remote_connect_back=0
+    env_file:
+      - ./.env
     volumes:
-      - "./src:/var/www/html"
-      - ./docker/apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - "./src/backend:/var/www/html"
     ports:
       - "${BACKEND_PORT}:80"
     restart: on-failure
     depends_on:
       - database
     command: >
-      sh -c "php -S 0.0.0.0:80 -t public"
+      sh -c "php artisan migrate:fresh && php artisan db:seed --class=AirportSeeder && php artisan db:seed --class=FlightSeeder && php artisan serve --port=80 --host=0.0.0.0"
+
 volumes:
   database_data:
     driver: local
