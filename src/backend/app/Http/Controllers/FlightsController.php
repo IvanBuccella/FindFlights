@@ -25,34 +25,34 @@ class FlightsController extends Controller
      */
     public function getLowestPriceFlight()
     {
+        $result = ["error" => "No Flights Found"];
 
         $maxStopOvers = 2;
         $s            = Airport::where('code', 'LIN')->first();
-        $t            = Airport::where('code', 'NAP')->first();
-        $result       = $this->shortestPath($s, $t, $maxStopOvers);
+        $t            = Airport::where('code', 'LIN')->first();
 
-        if (count($result) == 0) {
-            return response()->json(["error" => "No Flights Found"]);
+        $minCost = $this->revisitedBellmanFord($s, $t, $maxStopOvers);
+        if ($this->nextHop[$s->id] instanceof Flight) {
+            $result = ["price" => $minCost, "flights" => $this->getPath($s, $t)];
         }
 
         return response()->json($result);
-
     }
 
-    private function shortestPath($s, $t, $maxStopOvers)
+    private function revisitedBellmanFord($s, $t, $maxStopOvers)
     {
         $maxEdges = $maxStopOvers + 1;
         $infinite = 0x7FFFFFFF;
 
         $airports = Airport::all();
 
-        $m             = [];
+        $cost          = [];
         $this->nextHop = [];
         foreach ($airports as $airport) {
-            $m[$airport->id]             = $infinite;
+            $cost[$airport->id]          = $infinite;
             $this->nextHop[$airport->id] = 0;
         }
-        $m[$t->id] = 0;
+        $cost[$t->id] = 0;
 
         for ($i = 0; $i < $maxEdges; $i++) {
             foreach ($airports as $airport) {
@@ -61,19 +61,16 @@ class FlightsController extends Controller
                 foreach ($flights as $flight) {
                     $flight->departure;
                     $w        = $flight->arrival->id;
-                    $newPrice = floatval($m[$w]) + floatval($flight->price);
-                    if ($m[$v] > $newPrice) {
-                        $m[$v]             = $newPrice;
+                    $newPrice = floatval($cost[$w]) + floatval($flight->price);
+                    if ($cost[$v] > $newPrice) {
+                        $cost[$v]          = $newPrice;
                         $this->nextHop[$v] = $flight;
                     }
                 }
             }
         }
 
-        if (!($this->nextHop[$s->id] instanceof Flight)) {
-            return [];
-        }
-        return ["price" => $m[$s->id], "flights" => $this->getPath($s, $t)];
+        return $cost[$s->id];
     }
 
     private function getPath($s, $t)
@@ -91,5 +88,10 @@ class FlightsController extends Controller
         array_unshift($subpaths, $this->nextHop[$s->id]);
 
         return $subpaths;
+    }
+
+    private function checkCost()
+    {
+
     }
 }
