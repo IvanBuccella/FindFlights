@@ -1,5 +1,7 @@
 <?php
+use App\Http\Controllers\AirportsController;
 use App\Http\Controllers\FlightsController;
+use App\Http\Controllers\LowestFlightController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +20,7 @@ Route::get('/', function () {
 });
 
 Route::prefix('api')->group(function () {
-    Route::get('flights/lowest-price', [FlightsController::class, 'getLowestPriceFlight']);
+    Route::get('airports', [AirportsController::class, 'getAirports']);
+    Route::get('flights', [FlightsController::class, 'getFlights']);
+    Route::get('flights/lowest-price', [LowestFlightController::class, 'getLowestPriceFlight']);
 });
