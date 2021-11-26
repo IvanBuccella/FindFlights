@@ -77,5 +77,19 @@ class FlightSeeder extends Seeder
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
+        DB::table('flights')->insert([
+            'price'          => 2.00,
+            'code_departure' => 1,
+            'code_arrival'   => 5,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+        DB::table('flights')->insert([
+            'price'          => 5.00,
+            'code_departure' => 5,
+            'code_arrival'   => 2,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
     }
 }

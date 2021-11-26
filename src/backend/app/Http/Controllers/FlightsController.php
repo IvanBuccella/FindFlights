@@ -25,20 +25,9 @@ class FlightsController extends Controller
      */
     public function getLowestPriceFlight()
     {
-        /*
-        foreach (Airport::all() as $airport) {
-        $flights = Flight::where('code_departure', $airport->id)->get();
-        //::has('departure', '=', $airport->id)->get(); //For ogni arco (v,w) ∈ E
-        $a = $airport->code;
-        foreach ($flights as $flight) {
-        $b = $flight->departure->code;
-        $c = $flight->arrival->code;
-        $d = $flight->price;
-        }
-        }
-         */
+
         $maxStopOvers = 2;
-        $s            = Airport::where('code', 'EZE')->first();
+        $s            = Airport::where('code', 'LIN')->first();
         $t            = Airport::where('code', 'NAP')->first();
         $result       = $this->shortestPath($s, $t, $maxStopOvers);
 
@@ -65,7 +54,7 @@ class FlightsController extends Controller
         }
         $m[$t->id] = 0;
 
-        for ($i = 0; $i <= $maxEdges; $i++) {
+        for ($i = 0; $i < $maxEdges; $i++) {
             foreach ($airports as $airport) {
                 $v       = $airport->id;
                 $flights = Flight::where('code_departure', $v)->get();
@@ -81,7 +70,10 @@ class FlightsController extends Controller
             }
         }
 
-        return $this->getPath($s, $t);
+        if (!($this->nextHop[$s->id] instanceof Flight)) {
+            return [];
+        }
+        return ["price" => $m[$s->id], "flights" => $this->getPath($s, $t)];
     }
 
     private function getPath($s, $t)
@@ -91,13 +83,12 @@ class FlightsController extends Controller
         }
 
         if ($this->nextHop[$s->id]->arrival->id == $t->id) {
-            return ["price" => $this->nextHop[$s->id]->price, "flights" => [$this->nextHop[$s->id]]];
+            return [$this->nextHop[$s->id]];
         }
 
         $subpaths = $this->getPath($this->nextHop[$s->id]->arrival, $t);
 
-        $subpaths["price"] += $this->nextHop[$s->id]->price;
-        array_unshift($subpaths["flights"], $this->nextHop[$s->id]);
+        array_unshift($subpaths, $this->nextHop[$s->id]);
 
         return $subpaths;
     }
