@@ -22,5 +22,3 @@ RUN yes | pecl install xdebug-2.9.8 \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN chown -R www-data:www-data /var/www
-COPY ./src/backend .
-RUN composer install
