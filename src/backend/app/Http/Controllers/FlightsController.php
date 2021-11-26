@@ -7,7 +7,9 @@ use App\Models\Flight;
 
 class FlightsController extends Controller
 {
-    private $nextHop;
+    private $nextAirport = [];
+    private $cost        = [];
+
     /**
      * Create a new controller instance.
      *
@@ -25,73 +27,80 @@ class FlightsController extends Controller
      */
     public function getLowestPriceFlight()
     {
-        $result = ["error" => "No Flights Found"];
+        $codeDeparture = request()->codeDeparture;
+        $codeArrival   = request()->codeArrival;
+
+        $departure_airport = Airport::where('code', $codeDeparture)->first();
+        if (!$departure_airport instanceof Airport) {
+            return $this->response(["error" => "Cannot find the specified departure airport."]);
+        }
+
+        $arrival_airport = Airport::where('code', $codeArrival)->first();
+        if (!$arrival_airport instanceof Airport) {
+            return $this->response(["error" => "Cannot find the specified arrival airport."]);
+        }
 
         $maxStopOvers = 2;
-        $s            = Airport::where('code', 'LIN')->first();
-        $t            = Airport::where('code', 'LIN')->first();
-
-        $minCost = $this->revisitedBellmanFord($s, $t, $maxStopOvers);
-        if ($this->nextHop[$s->id] instanceof Flight) {
-            $result = ["price" => $minCost, "flights" => $this->getPath($s, $t)];
+        $minCost      = $this->revisitedBellmanFord($departure_airport, $arrival_airport, $maxStopOvers);
+        if ($this->nextAirport[$departure_airport->id] instanceof Flight) {
+            $response = ["price" => $minCost, "flights" => $this->getFlights($departure_airport, $arrival_airport)];
+        } else {
+            $response = ["error" => "No Flights Found"];
         }
 
-        return response()->json($result);
+        return $this->response($response);
     }
 
-    private function revisitedBellmanFord($s, $t, $maxStopOvers)
+    private function response($response)
+    {
+        return response()->json($response);
+    }
+
+    private function revisitedBellmanFord($departure_airport, $arrival_airport, $maxStopOvers)
     {
         $maxEdges = $maxStopOvers + 1;
-        $infinite = 0x7FFFFFFF;
-
         $airports = Airport::all();
 
-        $cost          = [];
-        $this->nextHop = [];
         foreach ($airports as $airport) {
-            $cost[$airport->id]          = $infinite;
-            $this->nextHop[$airport->id] = 0;
+            $this->cost[$airport->id]        = PHP_FLOAT_MAX;
+            $this->nextAirport[$airport->id] = null;
         }
-        $cost[$t->id] = 0;
+        $this->cost[$arrival_airport->id] = 0;
 
         for ($i = 0; $i < $maxEdges; $i++) {
             foreach ($airports as $airport) {
-                $v       = $airport->id;
-                $flights = Flight::where('code_departure', $v)->get();
-                foreach ($flights as $flight) {
-                    $flight->departure;
-                    $w        = $flight->arrival->id;
-                    $newPrice = floatval($cost[$w]) + floatval($flight->price);
-                    if ($cost[$v] > $newPrice) {
-                        $cost[$v]          = $newPrice;
-                        $this->nextHop[$v] = $flight;
-                    }
+                $current_departure_airport = $airport->id;
+                $available_flights_from    = Flight::where('code_departure', $current_departure_airport)->get();
+                foreach ($available_flights_from as $flight) {
+                    $this->updateCost($flight, $current_departure_airport);
                 }
             }
         }
 
-        return $cost[$s->id];
+        return $this->cost[$departure_airport->id];
     }
 
-    private function getPath($s, $t)
+    private function updateCost($flight, $departure_airport)
     {
-        if (!($this->nextHop[$s->id] instanceof Flight)) {
-            return [];
+        $flight->departure;
+        $arrival_airport = $flight->arrival->id;
+        $newPrice        = (float) $this->cost[$arrival_airport] + (float) $flight->price;
+        if ($this->cost[$departure_airport] > $newPrice) {
+            $this->cost[$departure_airport]        = (float) $newPrice;
+            $this->nextAirport[$departure_airport] = $flight;
+        }
+    }
+
+    private function getFlights($departure_airport, $arrival_airport)
+    {
+        if ($this->nextAirport[$departure_airport->id]->arrival->id == $arrival_airport->id) {
+            return [$this->nextAirport[$departure_airport->id]];
         }
 
-        if ($this->nextHop[$s->id]->arrival->id == $t->id) {
-            return [$this->nextHop[$s->id]];
-        }
+        $subpaths = $this->getFlights($this->nextAirport[$departure_airport->id]->arrival, $arrival_airport);
 
-        $subpaths = $this->getPath($this->nextHop[$s->id]->arrival, $t);
-
-        array_unshift($subpaths, $this->nextHop[$s->id]);
+        array_unshift($subpaths, $this->nextAirport[$departure_airport->id]);
 
         return $subpaths;
-    }
-
-    private function checkCost()
-    {
-
     }
 }
