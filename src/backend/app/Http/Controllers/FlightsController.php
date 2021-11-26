@@ -37,17 +37,22 @@ class FlightsController extends Controller
         }
         }
          */
-        $maxStopOvers = 1;
+        $maxStopOvers = 2;
         $s            = Airport::where('code', 'EZE')->first();
         $t            = Airport::where('code', 'NAP')->first();
-        $a            = $this->shortestPath($s, $t, $maxStopOvers);
+        $result       = $this->shortestPath($s, $t, $maxStopOvers);
 
-        return response()->json($a);
+        if (count($result) == 0) {
+            return response()->json(["error" => "No Flights Found"]);
+        }
+
+        return response()->json($result);
+
     }
 
     private function shortestPath($s, $t, $maxStopOvers)
     {
-        $maxDepth = $maxStopOvers + 1;
+        $maxEdges = $maxStopOvers + 1;
         $infinite = 0x7FFFFFFF;
 
         $airports = Airport::all();
@@ -60,7 +65,7 @@ class FlightsController extends Controller
         }
         $m[$t->id] = 0;
 
-        for ($i = 1; $i <= $maxDepth - 1; $i++) {
+        for ($i = 0; $i <= $maxEdges; $i++) {
             foreach ($airports as $airport) {
                 $v       = $airport->id;
                 $flights = Flight::where('code_departure', $v)->get();
@@ -81,8 +86,8 @@ class FlightsController extends Controller
 
     private function getPath($s, $t)
     {
-        if ($this->nextHop[$s->id] == 0) {
-            return ["price" => 0, "flights" => []];
+        if (!($this->nextHop[$s->id] instanceof Flight)) {
+            return [];
         }
 
         if ($this->nextHop[$s->id]->arrival->id == $t->id) {
