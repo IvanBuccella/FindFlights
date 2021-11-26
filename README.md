@@ -7,6 +7,7 @@ This is a PHP software that finds available flights assuming at most 2 stopovers
 ### Database Structure
 
 TAB1 - airport
+
 ```
 - id
 - name
@@ -16,6 +17,7 @@ TAB1 - airport
 ```
 
 TAB2 - flight
+
 ```
 - code_departure
 - code_arrival
@@ -24,7 +26,7 @@ TAB2 - flight
 
 ### Challenge
 
-Try to create a PHP algorith that finds the lowest price, given two different airport's code in TAB1, assuming at most 2 stopovers! 
+Try to create a PHP algorith that finds the lowest price, given two different airport's code in TAB1, assuming at most 2 stopovers!
 At the end, represent it in a working landing page.
 
 ## Tutorial Structure
@@ -70,4 +72,4 @@ $ docker-compose up
 
 ### Enjoy :-)
 
-You can use the application by visiting the `http://localhost:${APP_PORT}` URL.
+You can use the application by visiting the `http://localhost:${FRONTEND_PORT}` URL.

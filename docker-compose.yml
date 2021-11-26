@@ -23,9 +23,6 @@ services:
       dockerfile: ./docker/backend/Dockerfile.dev
       args:
         - version=${BACKEND_PHP_VERSION}
-    environment:
-      - XDEBUG_CONFIG= remote_port=${XDEBUG_PORT} remote_log_level=10
-        remote_host=host.docker.internal idekey=VSCODE remote_connect_back=0
     env_file:
       - ./.env
     volumes:
