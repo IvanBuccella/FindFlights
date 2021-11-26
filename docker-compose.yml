@@ -35,6 +35,24 @@ services:
     command: >
       sh -c "composer install && php artisan migrate:fresh && php artisan db:seed --class=AirportSeeder && php artisan db:seed --class=FlightSeeder && php artisan serve --port=80 --host=0.0.0.0"
 
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./docker/frontend/Dockerfile.dev
+      args:
+        - version=${FRONTEND_NODE_VERSION}
+    env_file:
+      - ./.env
+    volumes:
+      - "./src/frontend:/app"
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    restart: on-failure
+    depends_on:
+      - backend
+    command: >
+      sh -c "npm start"
+
 volumes:
   database_data:
     driver: local

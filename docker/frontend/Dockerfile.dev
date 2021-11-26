@@ -1,0 +1,7 @@
+ARG version
+FROM node:${version}
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY ./src/frontend/package.json ./
+COPY ./src/frontend/package-lock.json ./
+RUN npm install
