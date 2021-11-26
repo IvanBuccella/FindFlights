@@ -7,7 +7,7 @@ use App\Models\Flight;
 
 class FlightsController extends Controller
 {
-
+    private $nextHop;
     /**
      * Create a new controller instance.
      *
@@ -37,39 +37,63 @@ class FlightsController extends Controller
         }
         }
          */
-        $a = $this->shortestPath(1, 3, 2);
+        $maxStopOvers = 1;
+        $s            = Airport::where('code', 'EZE')->first();
+        $t            = Airport::where('code', 'NAP')->first();
+        $a            = $this->shortestPath($s, $t, $maxStopOvers);
 
         return response()->json($a);
     }
 
-    private function shortestPath($s, $t, $maxDepth)
+    private function shortestPath($s, $t, $maxStopOvers)
     {
+        $maxDepth = $maxStopOvers + 1;
         $infinite = 0x7FFFFFFF;
 
         $airports = Airport::all();
 
-        $m = [[]];
+        $m             = [];
+        $this->nextHop = [];
         foreach ($airports as $airport) {
-            $m[0][$airport->id] = $infinite;
+            $m[$airport->id]             = $infinite;
+            $this->nextHop[$airport->id] = 0;
         }
-        $m[0][$t] = 0;
+        $m[$t->id] = 0;
 
-        for ($i = 1; $i < $maxDepth; $i++) {
+        for ($i = 1; $i <= $maxDepth - 1; $i++) {
             foreach ($airports as $airport) {
-                $v         = $airport->id;
-                $previous  = $i - 1;
-                $m[$i][$v] = $m[$previous][$v];
-                $flights   = Flight::where('code_departure', $v)->get(); //For ogni arco (v,w) ∈ E
+                $v       = $airport->id;
+                $flights = Flight::where('code_departure', $v)->get();
                 foreach ($flights as $flight) {
-                    $w = $flight->arrival->id;
-                    if ($m[$i][$v] > $m[$previous][$w] + $flight->price) {
-                        $m[$i][$v] = $m[$previous][$w] + $flight->price;
+                    $flight->departure;
+                    $w        = $flight->arrival->id;
+                    $newPrice = floatval($m[$w]) + floatval($flight->price);
+                    if ($m[$v] > $newPrice) {
+                        $m[$v]             = $newPrice;
+                        $this->nextHop[$v] = $flight;
                     }
                 }
             }
         }
 
-        return $m[$maxDepth - 1][$s];
+        return $this->getPath($s, $t);
     }
 
+    private function getPath($s, $t)
+    {
+        if ($this->nextHop[$s->id] == 0) {
+            return ["price" => 0, "flights" => []];
+        }
+
+        if ($this->nextHop[$s->id]->arrival->id == $t->id) {
+            return ["price" => $this->nextHop[$s->id]->price, "flights" => [$this->nextHop[$s->id]]];
+        }
+
+        $subpaths = $this->getPath($this->nextHop[$s->id]->arrival, $t);
+
+        $subpaths["price"] += $this->nextHop[$s->id]->price;
+        array_unshift($subpaths["flights"], $this->nextHop[$s->id]);
+
+        return $subpaths;
+    }
 }

@@ -51,8 +51,8 @@ class FlightSeeder extends Seeder
         ]);
         DB::table('flights')->insert([
             'price'          => 20.00,
-            'code_departure' => 3,
-            'code_arrival'   => 8,
+            'code_departure' => 2,
+            'code_arrival'   => 4,
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
@@ -66,7 +66,7 @@ class FlightSeeder extends Seeder
         DB::table('flights')->insert([
             'price'          => 19.00,
             'code_departure' => 5,
-            'code_arrival'   => 10,
+            'code_arrival'   => 6,
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
