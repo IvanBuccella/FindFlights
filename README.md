@@ -54,7 +54,7 @@ $ git clone https://github.com/IvanBuccella/FindFlights
 
 ### Environment Variables
 
-Set your own environment variables by using the `.env-sample` file.
+Set your own environment variables by using the `.env-sample` file. You can just duplicate and rename it in `.env`.
 
 ### Build
 
