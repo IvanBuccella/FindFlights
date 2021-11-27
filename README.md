@@ -1,6 +1,8 @@
 # FindFlights
 
-This is a PHP software that finds available flights assuming at most 2 stopovers. It's developed using PHP Laravel framework and CoreUI for React framework.
+This is a PHP software that finds available flights assuming at most 2 stopovers.
+It's developed using PHP Laravel framework, ReactJS framework, and CoreUI for React.
+The problem is solved by revisiting the Bellman-Ford algorithm.
 
 ## Project Guidelines
 
