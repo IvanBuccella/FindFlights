@@ -33,9 +33,10 @@ const FindFlights = () => {
   const [spinner, setSpinner] = useState('')
   const [table, setTable] = useState('')
   const toaster = useRef()
+  const pageSpinner = <CSpinner color="success" variant="grow" />
 
   useEffect(() => {
-    setSpinner(getSpinner)
+    setSpinner(pageSpinner)
     axios.get(process.env.REACT_APP_BACKEND_URL + '/api/airports').then((res) => {
       setAirports(res.data)
       setSpinner('')
@@ -60,7 +61,7 @@ const FindFlights = () => {
     }
 
     setValidated(true)
-    setSpinner(getSpinner)
+    setSpinner(pageSpinner)
     getLowestPriceFlight(departure, arrival)
   }
 
@@ -88,8 +89,6 @@ const FindFlights = () => {
         }
       })
   }
-
-  const getSpinner = <CSpinner color="success" variant="grow" />
 
   const getTable = (price, flights) => {
     return (
