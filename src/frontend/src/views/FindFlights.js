@@ -104,7 +104,7 @@ const FindFlights = () => {
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell colSpan="2">Total Price:</CTableHeaderCell>
-            <CTableDataCell>{price}</CTableDataCell>
+            <CTableDataCell>&euro; {price}</CTableDataCell>
           </CTableRow>
         </CTableHead>
       </CTable>
@@ -118,7 +118,7 @@ const FindFlights = () => {
         <CTableRow key={flight.id}>
           <CTableDataCell>{flight.departure.name}</CTableDataCell>
           <CTableDataCell>{flight.arrival.name}</CTableDataCell>
-          <CTableDataCell>{flight.price}</CTableDataCell>
+          <CTableDataCell>&euro; {flight.price}</CTableDataCell>
         </CTableRow>
       ))
     )
