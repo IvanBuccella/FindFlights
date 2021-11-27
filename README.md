@@ -1,6 +1,6 @@
 # FindFlights
 
-This is a PHP software that finds available flights assuming at most 2 stopovers.
+This is a PHP software that finds available flights assuming at most 2 stopovers. It's developed using PHP Laravel framework and CoreUI for React framework.
 
 ## Project Guidelines
 
