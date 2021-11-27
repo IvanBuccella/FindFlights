@@ -91,5 +91,25 @@ class FlightSeeder extends Seeder
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
+        for ($i = 1; $i <= 10; $i++) {
+            for ($j = 10; $j >= 1; $j--) {
+                if ($i != $j) {
+                    DB::table('flights')->insert([
+                        'price'          => mt_rand(1, 999),
+                        'code_departure' => $i,
+                        'code_arrival'   => $j,
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ]);
+                    DB::table('flights')->insert([
+                        'price'          => mt_rand(1, 999),
+                        'code_departure' => $j,
+                        'code_arrival'   => $i,
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ]);
+                }
+            }
+        }
     }
 }
