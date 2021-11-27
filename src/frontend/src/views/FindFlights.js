@@ -40,8 +40,10 @@ const FindFlights = () => {
   const toaster = useRef()
 
   useEffect(() => {
+    setSpinner(getSpinner)
     axios.get(process.env.REACT_APP_BACKEND_URL + '/api/airports').then((res) => {
       setAirports(res.data)
+      setSpinner('')
     })
   }, [])
 
