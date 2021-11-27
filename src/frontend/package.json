@@ -1,17 +1,14 @@
 {
-  "name": "@coreui/coreui-free-react-admin-template",
-  "version": "4.0.0",
-  "description": "CoreUI Free React Admin Template",
+  "name": "find-flights",
+  "version": "1.0.0",
+  "description": "FindFlights Frontend",
   "homepage": ".",
-  "bugs": {
-    "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
-  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:coreui/coreui-free-react-admin-template.git"
+    "url": "git@github.com:IvanBuccella/FindFlights.git"
   },
   "license": "MIT",
-  "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
+  "author": "Ivan Buccella",
   "scripts": {
     "build": "react-scripts build",
     "changelog": "auto-changelog --starting-version 3.0.0 --commit-limit false --hide-credit",
