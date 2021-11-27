@@ -8,14 +8,9 @@ import {
   CCardHeader,
   CCol,
   CForm,
-  CFormCheck,
-  CFormInput,
   CFormFeedback,
   CFormLabel,
   CFormSelect,
-  CFormTextarea,
-  CInputGroup,
-  CInputGroupText,
   CRow,
   CToast,
   CToastHeader,
@@ -50,14 +45,14 @@ const FindFlights = () => {
   const handleSubmit = (event) => {
     clean()
 
-    if (departure.length == 0 || arrival.length == 0) {
+    if (departure.length === 0 || arrival.length === 0) {
       event.preventDefault()
       event.stopPropagation()
       addToast(getErrorToast('Missing Departure or Arrival airport'))
       return
     }
 
-    if (departure == arrival) {
+    if (departure === arrival) {
       event.preventDefault()
       event.stopPropagation()
       addToast(getErrorToast('Departure and Arrival are the same'))
