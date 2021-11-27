@@ -3,6 +3,6 @@ FROM node:${version}
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY ./src/frontend/package.json ./
-COPY ./src/frontend/package-lock.json ./
+RUN npm cache clean -f
 RUN npm install
-RUN npm install react-scripts@4.0.3 -g
+RUN npm install react-scripts@3.4.1 -g
