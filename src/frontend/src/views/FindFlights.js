@@ -44,6 +44,8 @@ const FindFlights = () => {
 
   const handleSubmit = (event) => {
     clean()
+    event.preventDefault()
+    event.stopPropagation()
 
     if (departure.length === 0 || arrival.length === 0) {
       event.preventDefault()
@@ -53,8 +55,6 @@ const FindFlights = () => {
     }
 
     if (departure === arrival) {
-      event.preventDefault()
-      event.stopPropagation()
       addToast(getErrorToast('Departure and Arrival are the same'))
       return
     }
