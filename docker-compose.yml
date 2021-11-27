@@ -27,6 +27,7 @@ services:
       - ./.env
     volumes:
       - "./src/backend:/var/www/html"
+      - /var/www/html/vendor
     ports:
       - "${BACKEND_PORT}:80"
     restart: on-failure
@@ -45,6 +46,7 @@ services:
       - ./.env
     volumes:
       - "./src/frontend:/app"
+      - /app/node_modules
     ports:
       - "${FRONTEND_PORT}:3000"
     restart: on-failure
@@ -53,7 +55,7 @@ services:
     stdin_open: true
     command: >
       sh -c "npm start"
-    
+
 volumes:
   database_data:
     driver: local

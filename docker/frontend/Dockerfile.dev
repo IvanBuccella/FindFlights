@@ -4,5 +4,5 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY ./src/frontend/package.json ./
 RUN npm cache clean -f
+RUN npm install react-scripts@4.0.3 sass@1.43.2 -g
 RUN npm install
-RUN npm install react-scripts@3.4.1 -g
