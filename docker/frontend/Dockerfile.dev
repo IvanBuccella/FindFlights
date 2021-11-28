@@ -5,5 +5,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY ./src/frontend/package.json ./
 COPY ./src/frontend/package-lock.json ./
 RUN npm cache clean -f
+RUN npm config set unsafe-perm true
 RUN npm install react-scripts@4.0.3 sass@1.43.2 -g
 RUN npm install
+RUN chown -R node:node /app
