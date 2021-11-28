@@ -34,7 +34,7 @@ services:
     depends_on:
       - database
     command: >
-      sh -c "composer install && php artisan migrate:fresh && php artisan db:seed --class=AirportSeeder && php artisan db:seed --class=FlightSeeder && php artisan serve --port=80 --host=0.0.0.0"
+      sh -c "composer install && php artisan migrate:fresh && php artisan db:seed && php artisan serve --port=80 --host=0.0.0.0"
 
   frontend:
     build:
