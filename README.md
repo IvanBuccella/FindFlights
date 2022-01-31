@@ -28,7 +28,7 @@ TAB2 - flight
 
 ### Challenge
 
-Try to create a PHP algorith that finds the lowest price, given two different airport's code in TAB1, assuming at most 2 stopovers!
+Try to create a PHP algorithm that finds the lowest price, given two different airport's code in TAB1, assuming at most 2 stopovers!
 At the end, represent it in a working landing page.
 
 ## Tutorial Structure
